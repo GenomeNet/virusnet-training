@@ -9,58 +9,17 @@ on:
 jobs:
   test:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 45
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Set up Miniconda
-        uses: conda-incubator/setup-miniconda@v3
-        with:
-          python-version: "3.10"
-          auto-activate-base: true
-
-      - name: Create conda environment
-        shell: bash -l {0}
-        run: |
-          conda create -n virusnet_gpu \
-            python=3.10 \
-            r-base=4.3 \
-            r-essentials \
-            -c conda-forge -y
-
-      - name: Install TensorFlow (CPU)
-        shell: bash -l {0}
-        run: |
-          conda activate virusnet_gpu
-          pip install tensorflow-cpu==2.12.1
-          pip install h5py==3.9.0
-
-      - name: Install R packages
-        shell: bash -l {0}
-        run: |
-          conda activate virusnet_gpu
-          Rscript -e '
-          install.packages(c(
-            "reticulate", "magrittr", "dplyr", "ggplot2",
-            "hdf5r", "zoo", "optparse", "data.table",
-            "yardstick", "microseq", "testthat",
-            "tensorflow", "keras"
-          ), repos = "https://cran.r-project.org")
-          '
-
-      - name: Install deepG
-        shell: bash -l {0}
-        run: |
-          conda activate virusnet_gpu
-          Rscript -e '
-          if (!requireNamespace("remotes", quietly = TRUE)) install.packages("remotes")
-          remotes::install_github("GenomeNet/deepG")
-          '
+      - name: Install environment
+        run: bash install.sh --cpu
 
       - name: Run tests
-        shell: bash -l {0}
         run: |
-          conda activate virusnet_gpu
+          eval "$(~/miniforge3/bin/conda shell.bash hook)"
+          mamba activate virusnet
           export RETICULATE_PYTHON=$(which python)
           Rscript tests/testthat.R
