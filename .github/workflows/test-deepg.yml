@@ -15,6 +15,8 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Install environment
+        env:
+          GITHUB_PAT: ${{ secrets.GITHUB_TOKEN }}
         run: bash install.sh --cpu
 
       - name: Run tests
@@ -22,4 +24,4 @@ jobs:
           eval "$(~/miniforge3/bin/conda shell.bash hook)"
           mamba activate virusnet
           export RETICULATE_PYTHON=$(which python)
-          Rscript tests/testthat.R
+          "$CONDA_PREFIX/bin/Rscript" tests/testthat.R
