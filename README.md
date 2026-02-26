@@ -20,7 +20,7 @@ Verify:
 
 ```bash
 mamba activate virusnet
-Rscript test_deepg.R
+$CONDA_PREFIX/bin/Rscript test_deepg.R
 ```
 
 ## Training Data
@@ -45,7 +45,7 @@ source "$(conda info --base)/etc/profile.d/conda.sh"
 mamba activate virusnet
 export RETICULATE_PYTHON=$(which python)
 
-Rscript train_virusnet.R \
+$CONDA_PREFIX/bin/Rscript train_virusnet.R \
   --data_dir "$VIRUSNET_DATA" \
   --checkpoint_dir ./checkpoints
 ```

@@ -78,10 +78,13 @@ fi
 
 conda activate "$ENV_NAME"
 
-# Ensure R uses the conda env's library, not the system one
+# Use the conda env's R, not the system one
+RSCRIPT="$CONDA_PREFIX/bin/Rscript"
 export R_LIBS_SITE="$CONDA_PREFIX/lib/R/library"
 export R_LIBS_USER="$CONDA_PREFIX/lib/R/library"
 export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
+
+echo "==> Using Rscript: $RSCRIPT"
 
 # ── 3. Install CUDA + TensorFlow ──────────────────────────────────────
 
@@ -100,7 +103,7 @@ pip install --quiet h5py==3.9.0
 
 echo "==> Installing additional R packages..."
 R_LIB="$CONDA_PREFIX/lib/R/library"
-Rscript -e "
+"$RSCRIPT" -e "
 options(repos = c(CRAN = 'https://cloud.r-project.org'))
 lib <- '$R_LIB'
 .libPaths(lib)
@@ -114,12 +117,14 @@ for (pkg in c('microseq')) {
 # ── 5. Install deepG ──────────────────────────────────────────────────
 
 echo "==> Installing deepG..."
-Rscript -e "
+"$RSCRIPT" -e "
 options(repos = c(CRAN = 'https://cloud.r-project.org'))
 lib <- '$R_LIB'
 .libPaths(lib)
 if (!requireNamespace('deepG', quietly = TRUE)) {
-  remotes::install_github('GenomeNet/deepG', lib = lib, upgrade = 'never')
+  pat <- Sys.getenv('GITHUB_PAT', unset = NA)
+  if (is.na(pat)) pat <- NULL
+  remotes::install_github('GenomeNet/deepG', lib = lib, upgrade = 'never', auth_token = pat)
 }
 "
 
@@ -127,7 +132,7 @@ if (!requireNamespace('deepG', quietly = TRUE)) {
 
 echo ""
 echo "==> Verifying installation..."
-RETICULATE_PYTHON="$(which python)" Rscript -e '
+RETICULATE_PYTHON="$(which python)" "$RSCRIPT" -e '
 library(reticulate)
 library(tensorflow)
 library(deepG)
@@ -146,5 +151,5 @@ echo "  Activate with:"
 echo "    mamba activate ${ENV_NAME}"
 echo ""
 echo "  Run tests with:"
-echo "    Rscript test_deepg.R"
+echo "    \$CONDA_PREFIX/bin/Rscript test_deepg.R"
 echo "============================================"

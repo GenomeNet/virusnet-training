@@ -14,12 +14,22 @@
 
 # ── 0. Configuration ─────────────────────────────────────────────────────
 
+# Check that we're using the conda env's R, not the system one
+r_home <- R.home()
+conda_prefix <- Sys.getenv("CONDA_PREFIX")
+if (conda_prefix != "" && !startsWith(r_home, conda_prefix)) {
+  cat("WARNING: Using system R at", r_home, "\n")
+  cat("  Expected conda env R from", conda_prefix, "\n")
+  cat("  Run with the conda env's Rscript:\n")
+  cat("    $CONDA_PREFIX/bin/Rscript test_deepg.R\n\n")
+}
+
 # RETICULATE_PYTHON should be set as an env var before running this script.
 # If not set, reticulate will try to auto-detect Python (may pick the wrong one).
 if (Sys.getenv("RETICULATE_PYTHON") == "") {
   cat("WARNING: RETICULATE_PYTHON is not set.\n")
   cat("  Set it to your conda env Python, e.g.:\n")
-  cat("  export RETICULATE_PYTHON=$(conda run -n virusnet_gpu which python)\n\n")
+  cat("  export RETICULATE_PYTHON=$(which python)\n\n")
 }
 
 # Training data path — set via VIRUSNET_DATA env var or change this default
