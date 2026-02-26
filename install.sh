@@ -42,7 +42,7 @@ else
   eval "$(conda shell.bash hook)"
 fi
 
-# ── 2. Create conda environment with R packages ───────────────────────
+# ── 2. Create conda environment ───────────────────────────────────────
 
 if conda env list | grep -q "^${ENV_NAME} "; then
   echo "==> Environment '${ENV_NAME}' already exists, updating..."
@@ -51,7 +51,7 @@ else
   mamba create -n "$ENV_NAME" \
     python=3.10 \
     r-base=4.3 \
-    r-essentials \
+    r-rcpp \
     r-reticulate \
     r-keras \
     r-tensorflow \
@@ -66,6 +66,13 @@ else
     r-remotes \
     r-testthat \
     r-purrr \
+    r-checkmate \
+    r-abind \
+    r-stringr \
+    r-readr \
+    r-png \
+    r-jpeg \
+    libstdcxx-ng \
     -c conda-forge -y
 fi
 
@@ -74,6 +81,7 @@ conda activate "$ENV_NAME"
 # Ensure R uses the conda env's library, not the system one
 export R_LIBS_SITE="$CONDA_PREFIX/lib/R/library"
 export R_LIBS_USER="$CONDA_PREFIX/lib/R/library"
+export LD_LIBRARY_PATH="$CONDA_PREFIX/lib:${LD_LIBRARY_PATH:-}"
 
 # ── 3. Install CUDA + TensorFlow ──────────────────────────────────────
 
