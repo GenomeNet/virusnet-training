@@ -9,6 +9,8 @@ Usage:
     python download_model.py --checksum-only    # print SHA-256 of all files
 """
 
+from __future__ import annotations
+
 import argparse
 import hashlib
 import os
@@ -59,7 +61,7 @@ ASSETS = {
         "url": f"{BASE_URL}/bio_bakery.tar.gz",
         "filename": "bio_bakery.tar.gz",
         "dest_dir": os.path.join(PROJECT_DIR, "data"),
-        "description": "BioBakery reference data (upload pending)",
+        "description": "BioBakery reference data (125 GB)",
         "sha256": None,  # pin once upload is complete
         "extract": True,
     },
@@ -172,9 +174,9 @@ def process_asset(name: str, asset: dict, dest_override: str | None, force: bool
 def main() -> None:
     parser = argparse.ArgumentParser(
         description="Download VirusNet training assets (base model and training data).")
-    parser.add_argument("asset", nargs="*", default=list(ASSETS.keys()),
-                        choices=[*ASSETS.keys(), []],
-                        help="Which asset(s) to download (default: all)")
+    parser.add_argument("asset", nargs="*", default=None,
+                        help="Which asset(s) to download (default: all). "
+                             f"Choices: {', '.join(ASSETS.keys())}")
     parser.add_argument("-o", "--output", default=None,
                         help="Custom output path (only valid when downloading a single asset)")
     parser.add_argument("--checksum-only", action="store_true",
@@ -197,12 +199,18 @@ def main() -> None:
         print(f"\nUsage: python {sys.argv[0]} [asset ...]")
         sys.exit(0)
 
-    if args.output and len(args.asset) > 1:
+    assets_to_get = args.asset if args.asset else list(ASSETS.keys())
+
+    for name in assets_to_get:
+        if name not in ASSETS:
+            parser.error(f"unknown asset '{name}'. Choose from: {', '.join(ASSETS.keys())}")
+
+    if args.output and len(assets_to_get) > 1:
         parser.error("-o/--output can only be used with a single asset")
 
     ok = True
-    for name in args.asset:
-        dest_override = args.output if len(args.asset) == 1 else None
+    for name in assets_to_get:
+        dest_override = args.output if len(assets_to_get) == 1 else None
         if not process_asset(name, ASSETS[name], dest_override, args.force, args.checksum_only):
             ok = False
 
