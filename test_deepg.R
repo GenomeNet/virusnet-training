@@ -120,8 +120,54 @@ if (data_base != "") {
   cat("  SKIPPED (VIRUSNET_DATA not set)\n")
 }
 
-# ── 5. Checkpoint loading ─────────────────────────────────────────────
-cat("\n=== 5. Checkpoint loading ===\n")
+# ── 5. Base BERT model loading ────────────────────────────────────────
+cat("\n=== 5. Base BERT model ===\n")
+# Default: models/llm_1k_bert.h5 next to this script; override with VIRUSNET_BASE_MODEL
+script_dir <- tryCatch(dirname(normalizePath(sys.frame(1)$ofile)), error = function(e) getwd())
+default_model_path <- file.path(script_dir, "models", "llm_1k_bert.h5")
+base_model_path <- Sys.getenv("VIRUSNET_BASE_MODEL", unset = default_model_path)
+
+if (file.exists(base_model_path)) {
+  cat("  Model file:", base_model_path, "\n")
+  cat("  Size:", round(file.info(base_model_path)$size / 1e6, 1), "MB\n")
+  check("load base BERT model", {
+    base_model <- keras::load_model_hdf5(base_model_path, compile = FALSE)
+    cat("  Input shape:", paste(unlist(base_model$input_shape), collapse = " x "), "\n")
+    cat("  Output shape:", paste(unlist(base_model$output_shape), collapse = " x "), "\n")
+
+    total_params     <- base_model$count_params()
+    trainable_params <- sum(sapply(base_model$trainable_weights, function(w) prod(w$shape$as_list())))
+    frozen_params    <- total_params - trainable_params
+    cat("  Total parameters:     ", format(total_params, big.mark = ","), "\n")
+    cat("  Trainable parameters: ", format(trainable_params, big.mark = ","), "\n")
+    cat("  Frozen parameters:    ", format(frozen_params, big.mark = ","), "\n")
+
+    n_layers <- length(base_model$layers)
+    cat("  Number of layers:", n_layers, "\n")
+
+    # Layer-type breakdown
+    layer_types <- sapply(base_model$layers, function(l) class(l)[1])
+    type_counts <- sort(table(layer_types), decreasing = TRUE)
+    cat("  Layer types:\n")
+    for (i in seq_along(type_counts)) {
+      cat(sprintf("    %-30s %d\n", names(type_counts)[i], type_counts[i]))
+    }
+
+    # Full model summary to stdout
+    cat("\n  --- Model summary ---\n")
+    base_model$summary()
+    cat("  ---------------------\n")
+
+    TRUE
+  })
+} else {
+  cat("  SKIPPED (model file not found)\n")
+  cat("  Download with:  python download_model.py\n")
+  cat("  Or set VIRUSNET_BASE_MODEL=/path/to/llm_1k_bert.h5\n")
+}
+
+# ── 6. Checkpoint loading ─────────────────────────────────────────────
+cat("\n=== 6. Checkpoint loading ===\n")
 cp_dir <- Sys.getenv("VIRUSNET_CHECKPOINT", unset = "")
 if (cp_dir != "" && dir.exists(cp_dir)) {
   hdf5_files <- list.files(cp_dir, pattern = "\\.hdf5$", full.names = TRUE)
@@ -143,8 +189,8 @@ if (cp_dir != "" && dir.exists(cp_dir)) {
   cat("  export VIRUSNET_CHECKPOINT=/path/to/checkpoint_dir\n")
 }
 
-# ── 6. Generator test ───────────────────────────────────────────────────
-cat("\n=== 6. Data generator test ===\n")
+# ── 7. Generator test ───────────────────────────────────────────────────
+cat("\n=== 7. Data generator test ===\n")
 if (data_base != "" && dir.exists(file.path(data_base, "validation"))) {
   check("get_generator works", {
     gen <- deepG::get_generator(
@@ -177,8 +223,8 @@ if (data_base != "" && dir.exists(file.path(data_base, "validation"))) {
   cat("  SKIPPED (VIRUSNET_DATA not set or validation/ not found)\n")
 }
 
-# ── 7. Model creation test ──────────────────────────────────────────────
-cat("\n=== 7. Model creation test (small) ===\n")
+# ── 8. Model creation test ──────────────────────────────────────────────
+cat("\n=== 8. Model creation test (small) ===\n")
 check("create_model_transformer works", {
   small_model <- deepG::create_model_transformer(
     maxlen          = 100,

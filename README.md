@@ -23,6 +23,24 @@ mamba activate virusnet
 $CONDA_PREFIX/bin/Rscript test_deepg.R
 ```
 
+## Base Model
+
+The base model (`llm_1k_bert.h5`) is a BERT-like masked language model we
+pre-trained on genomic sequences using deepG. It serves as the starting point
+for fine-tuning the binary VirusNet classifier.
+
+Download the pre-trained weights:
+
+```bash
+python download_model.py            # saves to models/llm_1k_bert.h5
+```
+
+Or manually:
+
+```
+https://research.bifo.helmholtz-hzi.de/downloads/genomenet/llm_1k_bert.h5
+```
+
 ## Training Data
 
 <!-- TODO: Add download URL once data is published -->
