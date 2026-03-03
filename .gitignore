@@ -1,3 +1,18 @@
-models/
-data/
+# Downloaded model weights
+models/*.h5
+
+# Downloaded data (fasta files, tarballs)
+data/**/*.fasta
+data/**/*.fna
+data/**/*.fa
+data/**/*.tar.gz
+data/**/*.sh
 *.part
+
+# Keep data directory READMEs
+!data/**/README.md
+
+# Training artifacts
+checkpoints/
+logs/
+*.rds
