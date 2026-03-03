@@ -2,12 +2,11 @@
 """Download assets for VirusNet training.
 
 Usage:
-    python download_model.py                # download all assets
-    python download_model.py model          # base BERT model only
-    python download_model.py data           # training data only
-    python download_model.py --checksum-only          # print SHA-256 of all files
-    python download_model.py model --checksum-only    # print SHA-256 of model
-    python download_model.py -o /tmp/model.h5 model   # custom output path
+    python download_model.py                    # download all assets
+    python download_model.py model              # base BERT model only
+    python download_model.py archaea non-virus  # specific datasets
+    python download_model.py --list             # show available assets
+    python download_model.py --checksum-only    # print SHA-256 of all files
 """
 
 import argparse
@@ -21,21 +20,47 @@ import shutil
 PROJECT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 # ── Asset registry ────────────────────────────────────────────────────
+BASE_URL = "https://research.bifo.helmholtz-hzi.de/downloads/genomenet"
+
 ASSETS = {
     "model": {
-        "url": "https://research.bifo.helmholtz-hzi.de/downloads/genomenet/llm_1k_bert.h5",
+        "url": f"{BASE_URL}/llm_1k_bert.h5",
         "filename": "llm_1k_bert.h5",
         "dest_dir": os.path.join(PROJECT_DIR, "models"),
-        "description": "Base BERT model (pre-trained with deepG)",
-        "sha256": None,  # pin after first download
+        "description": "Base BERT model (pre-trained with deepG, 2.8 GB)",
+        "sha256": "27bddd035ba38d783373e6703f71ac5c812789a9a48f7c5783c0841d64dd52f4",
         "extract": False,
     },
-    "data": {
-        "url": "https://research.bifo.helmholtz-hzi.de/downloads/genomenet/additional-archaea-merged.tar.gz",
+    "archaea": {
+        "url": f"{BASE_URL}/additional-archaea-merged.tar.gz",
         "filename": "additional-archaea-merged.tar.gz",
         "dest_dir": os.path.join(PROJECT_DIR, "data"),
-        "description": "Training data for VirusNet binary classification",
-        "sha256": None,  # pin after first download
+        "description": "Additional archaea training data (190 MB)",
+        "sha256": "ca51731565c5e8c6167fb197bf875fc95c5de27148c42535099db5f68f8c51e3",
+        "extract": True,
+    },
+    "non-virus": {
+        "url": f"{BASE_URL}/non_virus.tar.gz",
+        "filename": "non_virus.tar.gz",
+        "dest_dir": os.path.join(PROJECT_DIR, "data"),
+        "description": "Non-virus sequences for binary classification (3.7 GB)",
+        "sha256": "f403f54034edbc36278a051cd6b0d97ba5f8e859149fa48a388157b48401c11b",
+        "extract": True,
+    },
+    "virusnet-sim": {
+        "url": f"{BASE_URL}/VirusNet_subsampled_sim.tar.gz",
+        "filename": "VirusNet_subsampled_sim.tar.gz",
+        "dest_dir": os.path.join(PROJECT_DIR, "data"),
+        "description": "Subsampled simulated VirusNet training data (6.1 GB)",
+        "sha256": "7b9f936b34fc654b0b9964cb15709abf8a09df412a86272075a42d424922da12",
+        "extract": True,
+    },
+    "bio-bakery": {
+        "url": f"{BASE_URL}/bio_bakery.tar.gz",
+        "filename": "bio_bakery.tar.gz",
+        "dest_dir": os.path.join(PROJECT_DIR, "data"),
+        "description": "BioBakery reference data (upload pending)",
+        "sha256": None,  # pin once upload is complete
         "extract": True,
     },
 }
@@ -156,7 +181,21 @@ def main() -> None:
                         help="Print SHA-256 of existing file(s) and exit.")
     parser.add_argument("--force", action="store_true",
                         help="Re-download even if the file already exists.")
+    parser.add_argument("--list", action="store_true",
+                        help="List available assets and exit.")
     args = parser.parse_args()
+
+    if args.list:
+        print("Available assets:\n")
+        for name, asset in ASSETS.items():
+            status = ""
+            dest = os.path.join(asset["dest_dir"], asset["filename"])
+            if os.path.isfile(dest):
+                mb = os.path.getsize(dest) / 1e6
+                status = f" [{mb:.1f} MB, downloaded]"
+            print(f"  {name:16s}  {asset['description']}{status}")
+        print(f"\nUsage: python {sys.argv[0]} [asset ...]")
+        sys.exit(0)
 
     if args.output and len(args.asset) > 1:
         parser.error("-o/--output can only be used with a single asset")
