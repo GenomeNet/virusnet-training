@@ -32,20 +32,23 @@ for fine-tuning the binary VirusNet classifier.
 Download the pre-trained weights:
 
 ```bash
-python download_model.py            # saves to models/llm_1k_bert.h5
-```
-
-Or manually:
-
-```
-https://research.bifo.helmholtz-hzi.de/downloads/genomenet/llm_1k_bert.h5
+python download_model.py model      # saves to models/llm_1k_bert.h5
 ```
 
 ## Training Data
 
-<!-- TODO: Add download URL once data is published -->
+Training data for the binary VirusNet classifier (includes additional archaea
+sequences):
 
-Training data will be provided as a downloadable archive.
+```bash
+python download_model.py data       # saves to data/ and extracts the archive
+```
+
+Download everything at once:
+
+```bash
+python download_model.py            # downloads model + training data
+```
 
 ## Training
 
