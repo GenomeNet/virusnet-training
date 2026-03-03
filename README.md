@@ -34,7 +34,7 @@ sbatch tests/test_quick.slurm
 Full GPU test (loads base BERT model, checks GPU, ~10 min):
 
 ```bash
-python download_model.py model    # download base model first
+python download.py model    # download base model first
 sbatch tests/test_gpu.slurm
 
 # with training data:
@@ -50,7 +50,7 @@ for fine-tuning the binary VirusNet classifier.
 Download the pre-trained weights:
 
 ```bash
-python download_model.py model      # saves to models/llm_1k_bert.h5
+python download.py model      # saves to models/llm_1k_bert.h5
 ```
 
 ## Training Data
@@ -58,8 +58,8 @@ python download_model.py model      # saves to models/llm_1k_bert.h5
 Training datasets for the binary VirusNet classifier:
 
 ```bash
-python download_model.py --list     # show all available assets with sizes
-python download_model.py            # download everything (~135 GB total)
+python download.py --list     # show all available assets with sizes
+python download.py            # download everything (~135 GB total)
 ```
 
 Individual datasets:
@@ -72,7 +72,7 @@ Individual datasets:
 | `bio-bakery` | BioBakery reference data | 125 GB |
 
 ```bash
-python download_model.py archaea non-virus   # download specific datasets
+python download.py archaea non-virus   # download specific datasets
 ```
 
 ## Training

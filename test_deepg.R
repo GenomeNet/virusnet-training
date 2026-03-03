@@ -162,7 +162,7 @@ if (file.exists(base_model_path)) {
   })
 } else {
   cat("  SKIPPED (model file not found)\n")
-  cat("  Download with:  python download_model.py\n")
+  cat("  Download with:  python download.py\n")
   cat("  Or set VIRUSNET_BASE_MODEL=/path/to/llm_1k_bert.h5\n")
 }
 

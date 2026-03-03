@@ -2,11 +2,11 @@
 """Download assets for VirusNet training.
 
 Usage:
-    python download_model.py                    # download all assets
-    python download_model.py model              # base BERT model only
-    python download_model.py archaea non-virus  # specific datasets
-    python download_model.py --list             # show available assets
-    python download_model.py --checksum-only    # print SHA-256 of all files
+    python download.py                    # download all assets
+    python download.py model              # base BERT model only
+    python download.py archaea non-virus  # specific datasets
+    python download.py --list             # show available assets
+    python download.py --checksum-only    # print SHA-256 of all files
 """
 
 from __future__ import annotations

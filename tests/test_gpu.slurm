@@ -12,7 +12,7 @@
 # runs all test sections including model summary.
 #
 # Prerequisites:
-#   python download_model.py model   # downloads models/llm_1k_bert.h5
+#   python download.py model   # downloads models/llm_1k_bert.h5
 #
 # Usage:
 #   cd /vol/hpcprojects/BIFO/genomenet/virusnet-training
