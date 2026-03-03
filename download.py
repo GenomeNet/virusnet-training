@@ -4,7 +4,7 @@
 Usage:
     python download.py                    # download all assets
     python download.py model              # base BERT model only
-    python download.py archaea non-virus  # specific datasets
+    python download.py archaea non-virus virus  # specific datasets
     python download.py --list             # show available assets
     python download.py --checksum-only    # print SHA-256 of all files
 """
@@ -55,6 +55,14 @@ ASSETS = {
         "dest_dir": os.path.join(PROJECT_DIR, "data"),
         "description": "Subsampled simulated VirusNet training data (6.1 GB)",
         "sha256": "7b9f936b34fc654b0b9964cb15709abf8a09df412a86272075a42d424922da12",
+        "extract": True,
+    },
+    "virus": {
+        "url": f"{BASE_URL}/VirusNet_data_virus.tar.gz",
+        "filename": "VirusNet_data_virus.tar.gz",
+        "dest_dir": os.path.join(PROJECT_DIR, "data"),
+        "description": "Virus sequences for binary classification (required for training)",
+        "sha256": None,  # pin once upload is complete
         "extract": True,
     },
     "bio-bakery": {
