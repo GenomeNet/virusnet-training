@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=virusnet-quick
-#SBATCH --partition=batch
 #SBATCH --cpus-per-task=4
 #SBATCH --mem=16G
 #SBATCH --time=00:10:00
@@ -12,8 +11,7 @@
 # Skips: GPU, training data, base BERT model (env vars not set).
 #
 # Usage:
-#   cd /vol/hpcprojects/BIFO/genomenet/virusnet-training
-#   sbatch tests/test_quick.slurm
+#   sbatch -p cpu tests/test_quick.slurm
 #
 set -euo pipefail
 

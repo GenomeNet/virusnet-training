@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=virusnet-gpu-test
-#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=32G
@@ -15,16 +14,15 @@
 #   python download.py model   # downloads models/llm_1k_bert.h5
 #
 # Usage:
-#   cd /vol/hpcprojects/BIFO/genomenet/virusnet-training
-#   sbatch tests/test_gpu.slurm
+#   sbatch -p gpu tests/test_gpu.slurm
 #
 #   # With training data:
-#   sbatch --export=ALL,VIRUSNET_DATA=/path/to/data tests/test_gpu.slurm
+#   sbatch -p gpu --export=ALL,VIRUSNET_DATA=/path/to/data tests/test_gpu.slurm
 #
 set -euo pipefail
 
 ENV_NAME="${ENV_NAME:-virusnet}"
-SCRIPT_DIR="$(cd "$(dirname "$0")/.." && pwd)"
+SCRIPT_DIR="${SLURM_SUBMIT_DIR:-.}"
 
 echo "=== Full GPU test ==="
 echo "  Host: $(hostname)"

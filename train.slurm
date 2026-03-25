@@ -1,6 +1,5 @@
 #!/bin/bash
 #SBATCH --job-name=virusnet-train
-#SBATCH --partition=gpu
 #SBATCH --gres=gpu:1
 #SBATCH --cpus-per-task=8
 #SBATCH --mem=64G
@@ -16,7 +15,7 @@
 #
 # Usage (from the virusnet-training directory):
 #   mkdir -p logs
-#   sbatch train.slurm
+#   sbatch -p gpu train.slurm
 #
 # With custom data path:
 #   sbatch --export=ALL,VIRUSNET_DATA=/path/to/data train.slurm
@@ -27,7 +26,7 @@
 set -euo pipefail
 
 ENV_NAME="${ENV_NAME:-virusnet}"
-SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
+SCRIPT_DIR="${SLURM_SUBMIT_DIR:-.}"
 TRAIN_SCRIPT="${VIRUSNET_TRAIN_SCRIPT:-train_virusnet.R}"
 
 echo "=== VirusNet Training ==="
