@@ -22,6 +22,7 @@ jobs:
       - name: Run tests
         run: |
           eval "$(~/miniforge3/bin/conda shell.bash hook)"
+          eval "$(~/miniforge3/bin/mamba shell hook --shell bash)"
           mamba activate virusnet
           export RETICULATE_PYTHON=$(which python)
           "$CONDA_PREFIX/bin/Rscript" tests/testthat.R
