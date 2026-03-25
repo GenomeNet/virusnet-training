@@ -25,4 +25,4 @@ jobs:
           eval "$(~/miniforge3/bin/mamba shell hook --shell bash)"
           mamba activate virusnet
           export RETICULATE_PYTHON=$(which python)
-          "$CONDA_PREFIX/bin/Rscript" tests/testthat.R
+          cd tests && "$CONDA_PREFIX/bin/Rscript" testthat.R
