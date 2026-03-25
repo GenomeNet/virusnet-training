@@ -131,7 +131,7 @@ if (file.exists(base_model_path)) {
   cat("  Model file:", base_model_path, "\n")
   cat("  Size:", round(file.info(base_model_path)$size / 1e6, 1), "MB\n")
   check("load base BERT model", {
-    base_model <- keras::load_model_hdf5(base_model_path, compile = FALSE)
+    base_model <- deepG::load_cp(base_model_path, compile = FALSE)
     cat("  Input shape:", paste(unlist(base_model$input_shape), collapse = " x "), "\n")
     cat("  Output shape:", paste(unlist(base_model$output_shape), collapse = " x "), "\n")
 
