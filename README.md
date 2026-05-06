@@ -60,11 +60,11 @@ Individual assets:
 | Asset | Description | Size |
 |-------|-------------|------|
 | `model` | Pre-trained BERT base model (`llm_1k_bert.h5`) | 2.8 GB |
-| `virus` | Virus sequences (positive class) | — |
-| `archaea` | Additional archaea sequences (non-virus) | 190 MB |
-| `non-virus` | Non-virus sequences | 3.7 GB |
-| `virusnet-sim` | Subsampled simulated data (non-virus) | 6.1 GB |
-| `bio-bakery` | BioBakery reference data (non-virus) | 125 GB |
+| `virus` | Virus sequences (positive class): NCBI GenBank + MGV gut-virome vOTU representatives | 1.1 GB |
+| `archaea` | Archaea genomes (subsampled + simulated), train/val/test splits; reduces false positives on archaeal input | 190 MB |
+| `non-virus` | Diverse negative examples: PLSDB plasmids, microbial, human, fish, and bacterial genomes | 3.7 GB |
+| `virusnet-sim` | Real GCA assemblies + PLSDB plasmids paired with simulated fragments for robustness evaluation | 6.1 GB |
+| `bio-bakery` | Large BioBakery microbial reference genome collection | 125 GB |
 
 ```bash
 # Minimum required for training:

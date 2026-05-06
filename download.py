@@ -61,8 +61,8 @@ ASSETS = {
         "url": f"{BASE_URL}/VirusNet_data_virus.tar.gz",
         "filename": "VirusNet_data_virus.tar.gz",
         "dest_dir": os.path.join(PROJECT_DIR, "data"),
-        "description": "Virus sequences for binary classification (required for training)",
-        "sha256": None,  # pin once upload is complete
+        "description": "Virus sequences for binary classification (1.1 GB)",
+        "sha256": "61f671a7e332f4e77590541817cb45b2e963e43916be1bf2bfa4d4333455d9f3",
         "extract": True,
     },
     "bio-bakery": {
